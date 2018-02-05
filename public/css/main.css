@@ -1,0 +1,117 @@
+html {
+    --color-orange: #f56b2a;
+    --color-blue: #3469a2;
+    --color-dark: #1a1a1a;
+    --color-grey: #989898;
+    --color-bg-gray: #666666;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #FAFAFA;
+}
+
+/* NAVBAR */
+.navbar {
+    background-color: var(--color-orange);
+    margin-bottom: 20px;
+}
+
+/* navbar-brand */
+.navbar-light .navbar-brand {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+}
+
+/* links */
+.navbar-light .navbar-nav .active>.nav-link, 
+.navbar-light .navbar-nav .nav-link.active, 
+.navbar-light .navbar-nav .nav-link.show, 
+.navbar-light .navbar-nav .show>.nav-link,
+.navbar-light .navbar-nav .nav-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+}
+
+.navbar-light .navbar-toggler{
+    border-color: white;
+}
+
+/* bars icon*/
+.navbar-light .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,<svg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'><path stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/></svg>")
+}
+
+/* PRODUCTS */
+.product {
+    display: flex;
+    background-color: white;
+    height: 171px;
+    padding: 10px 20px;
+    border: 1px solid #ccc
+}
+
+.productImg img{
+    height: 100%;
+}
+
+.productImg {
+    height: 100%;
+}
+
+.productText {
+    margin-left: 40px;
+}
+
+.productText .title {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+    color: var(--color-blue);
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.productText .city {
+    font-size: 13px;
+    line-height: 19px;
+    color: var(--color-dark);
+    margin-bottom: 10px;
+}
+
+.productText .price {
+    font-size: 20px;
+    line-height: 30px;
+    font-weight: 700;
+    color: var(--color-orange)
+}
+
+/* PUBLISH PRODUCT */
+.publish-product h1 {
+    font-size: 18px;
+    line-height: 27px;
+    font-weight: 700;
+    color: var(--color-grey);
+}
+
+.publish-product h2 {
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 600;
+    color: white;
+    background-color: #666;
+    padding: 10px 20px;
+    margin-bottom: 0;
+}
+
+.publish-product section {
+    background-color: white;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+}
+
+.publish-product .form-control {
+    max-width: 500px;
+}
