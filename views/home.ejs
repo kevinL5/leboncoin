@@ -1,20 +1,21 @@
 <% include partials/header.ejs %>
 
 <div class="container">
-        <!-- 794*171 -->
+        <% for(product of products) { %>
         <div class="product">
 
             <div class="productImg">
-                <img src="https://img3.leboncoin.fr/ad-image/9a6a76de36c7c55e4a49f1276c8a0e1b4efd7719.jpg" alt="">
+                <img src="/uploads/<%= product.photo %>" alt="">
             </div>
 
             <div class="productText">
-                <div class="title">DVD : Documentaire</div>
-                <div class="city">Paris 10ème</div>
-                <div class="price">1 €</div>
+                <div class="title"><%= product.title %></div>
+                <div class="city"><%= product.city %></div>
+                <div class="price"><%= product.price %> €</div>
             </div>
 
         </div>
+        <% } %>
     
 </div>
 

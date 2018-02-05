@@ -1,0 +1,43 @@
+<% include partials/header.ejs %>
+
+<div class="container-fluid details d-flex">
+
+    <div class="left-details">
+        <section class="padding">
+            <div class="title"><%= product.title %></div>
+
+            <img src="/uploads/<%= product.photo %>" alt="">
+        </section>
+
+        <section class="padding">
+            <div class="pseudo"><%= product.pseudo %></div>
+        </section>
+
+        <section class="d-flex align-items-center">
+            <div class="price-title">Prix</div>
+            <div class="price"><%= product.price %> €</div>
+        </section>
+
+        <section class="d-flex align-items-center">
+            <div class="city-title">Ville</div>
+            <div class="city"><%= product.city %></div>
+        </section>
+
+        <section class="padding">
+            <div class="description-title">Description :</div>
+            <div class="description"><%= product.description %></div>
+        </section>
+        
+    </div>
+
+    <div class="right-details">
+        <section>
+            <div class="pseudo-right"><%= product.pseudo %></div>
+        </section>
+        <section>
+            <button class="btn">Voir le numéro</button>
+        </section>
+    </div>
+</div>
+
+<% include partials/footer.ejs %>

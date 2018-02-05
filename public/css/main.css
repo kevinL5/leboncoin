@@ -89,6 +89,10 @@ body {
 }
 
 /* PUBLISH PRODUCT */
+.publish-product {
+    margin-bottom: 60px;
+}
+
 .publish-product h1 {
     font-size: 18px;
     line-height: 27px;
@@ -110,8 +114,129 @@ body {
     background-color: white;
     padding: 10px 20px;
     margin-bottom: 20px;
+    border: 1px solid #ccc;
 }
 
 .publish-product .form-control {
     max-width: 500px;
+}
+
+.publish-product label {
+    font-size: 13px;
+    line-height: 19px;
+    font-weight: 700;
+    color: var(--color-dark);
+}
+
+.publish-product .btn-publish {
+    background-color: rgb(65, 131, 215);
+    color: white;
+    padding: 10px 40px;
+}
+
+/* DETAILS PRODUCT */
+
+.details {
+    max-width: 1024px;
+}
+
+.details section {
+    border: 1px solid #ccc;
+    margin-top: -1px;
+}
+
+section.padding {
+    padding: 5px 20px;
+}
+
+.left-details {
+    flex: 2;
+}
+
+.left-details .title{
+    font-size: 20px;
+    line-height: 30px;
+    font-weight: 700;
+    color: var(--color-dark);
+    margin: 5px 0 10px 0;
+}
+
+.left-details img{
+    max-height: 455px;
+    max-width: 100%;
+    margin-bottom: 10px;
+}
+
+.left-details .pseudo{
+    font-size: 13px;
+    line-height: 19px;
+    font-weight: 700;
+    color: var(--color-blue);
+    margin: 5px 0;
+}
+
+.left-details .price-title, 
+.left-details .city-title {
+    flex: 1;
+    max-width: 200px;
+    font-size: 13px;
+    line-height: 19px;
+    font-weight: 600;
+    padding: 5px 20px;
+    margin-right: 10px;
+    color: var(--color-dark);
+    background-color: #efefef;
+}
+
+.left-details .price {
+    flex: 1;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-orange);
+}
+
+.left-details .city {
+    flex: 1;
+    font-size: 13px;
+    line-height: 19px;
+    font-weight: 400;
+    color: var(--color-dark);
+    margin: 5px 0;
+}
+
+.left-details .description-title{
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 600;
+    color: var(--color-dark);
+    margin: 5px 0;
+}
+
+.left-details .description{
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--color-dark);
+    margin-bottom: 20px;
+}
+
+.right-details {
+    flex: 1;
+    margin-left: 20px;
+}
+
+.right-details .pseudo-right {
+    height: 44px;
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 600;
+    color: var(--color-dark);
+    text-align: center;
+    background-color: #E6E6E6;
+    margin-bottom: 10px;
+}
+
+.right-details button {
+    background-color: var(--color-orange);
+    color: white;
+    padding: .375rem 50px;
 }
