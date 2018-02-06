@@ -6,11 +6,11 @@
         <section class="padding">
             <div class="title"><%= product.title %></div>
 
-            <img src="/uploads/<%= product.photo %>" alt="">
+            <img src="/uploads/<%= product.photos[0] %>" alt="">
         </section>
 
         <section class="padding">
-            <div class="pseudo"><%= product.pseudo %></div>
+            <div class="pseudo"><%= user.pseudo %></div>
         </section>
 
         <section class="d-flex align-items-center">
@@ -32,10 +32,17 @@
 
     <div class="right-details">
         <section>
-            <div class="pseudo-right"><%= product.pseudo %></div>
+            <div class="pseudo-right"><%= user.pseudo %></div>
         </section>
         <section>
-            <button class="btn">Voir le numéro</button>
+            <button class="btn btn-phone">Voir le numéro</button>
+        </section>
+        <section>
+            <a href="/annonce/<%= product._id %>/edit" class="btn btn-warning">Modifier</a>
+
+            <form action="/annonce/<%= product._id %>/delete" method="post">
+                <button class="btn btn-danger">Supprimer</button>
+            </form>
         </section>
     </div>
 </div>

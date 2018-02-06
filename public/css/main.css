@@ -53,6 +53,10 @@ body {
     border: 1px solid #ccc
 }
 
+.product:hover {
+    text-decoration: none;
+}
+
 .productImg img{
     height: 100%;
 }
@@ -235,8 +239,12 @@ section.padding {
     margin-bottom: 10px;
 }
 
-.right-details button {
+.right-details .btn {
+    padding: .375rem 50px;
+}
+
+.right-details .btn-phone {
     background-color: var(--color-orange);
     color: white;
-    padding: .375rem 50px;
+    
 }
