@@ -1,29 +1,44 @@
-<% include partials/header.ejs %>  
+<% include partials/header.ejs %>
+<% if(product !== null) {
+    var h1 = "Modifier votre annonce"
+    var action = `/annonce/${product._id}/edit`
+
+    var title = product.title
+    var description = product.description
+    var price = product.price
+    var city = product.city
+} else {
+    var h1 = "Déposer votre annonce"
+    var action = "/deposer"
+} %>
 
 <div class="container publish-product">
 
-    <h1>Déposer une annonce</h1>
+    <h1><%= h1 %></h1>
 
     <hr>
 
-    <form action="/deposer" method="post" enctype="multipart/form-data">
+    <form action="<%= action %>" method="post" enctype="multipart/form-data">
         <h2>Votre annonce</h2>
         <section>
             <div class="form-group">
                 <label>Titre de l'annonce</label>
-                <input type="text" name="title" class="form-control">
+                <input type="text" name="title" class="form-control" value="<%= title %>">
             </div>
             <div class="form-group">
                 <label>Texte de l'annonce</label>
-                <textarea name="description" class="form-control" rows="10"></textarea>
+                <textarea name="description" class="form-control" rows="10"><%= description %></textarea>
             </div>
             <div class="form-group">
                 <label>Prix</label>
-                <input type="text" name="price" class="form-control">
+                <input type="text" name="price" class="form-control" value="<%= price %>">
             </div>
             <div class="form-group">
                 <label>Photo</label>
-                <input type="file" name="photo" class="form-control-file">
+                <% if(product != null) { %>
+                    <img src="/uploads/<%= product.photos[0] %>" alt="" width=120>
+                <% } %>
+                <input type="file" name="photos" class="form-control-file">
             </div>
         </section>
 
@@ -31,10 +46,11 @@
         <section>
             <div class="form-group">
                 <label>Ville ou code postal</label>
-                <input type="text" name="city" class="form-control">
+                <input type="text" name="city" class="form-control" value="<%= city %>">
             </div>
         </section>
 
+        <% if (product === null) { %>
         <h2>Vos informations</h2>
         <section>
             <div class="form-group">
@@ -50,6 +66,7 @@
                 <input type="text" name="phone" class="form-control">
             </div>
         </section>
+        <% } %>
         
         <button type="submit" class="btn btn-publish">Valider</button>
     </form>

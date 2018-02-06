@@ -32,15 +32,40 @@ var userSchema = new mongoose.Schema({
 var Product = mongoose.model("Product", productSchema)
 var User = mongoose.model("User", userSchema)
 
-// app.get('/annonce/:id/edit', function(req, res) {
-//     var id = req.params.id
+app.post('/annonce/:id/edit', upload.single("photos"), function(req, res) {
+    var id = req.params.id
 
-//     Product.findById(id, function(err, product) {
-//         if (!err) { 
+    console.log(req.body)
+
+    Product.findById(id, function(err, product) {
+        if (!err) {
+            product.title = req.body.title
+            product.title = req.body.title
+            product.city = req.body.city
+            product.price = req.body.price
+            product.pseudo = req.body.pseudo
+            product.description = req.body.description
             
-//         }
-//     })
-// })
+            if (req.file) product.photos = [req.file.filename]
+
+            product.save(function(err, obj) {
+                res.redirect('/annonce/' + obj._id)
+            })
+        }
+    })
+})
+
+app.get('/annonce/:id/edit', function(req, res) {
+    var id = req.params.id
+
+    Product.findById(id, function(err, product) {
+        if (!err) {
+            console.log('coucou')
+            console.log(product)
+            res.render('publishProduct.ejs', { product })
+        }
+    })
+})
 
 app.post('/annonce/:id/delete', function(req, res) {
     var id = req.params.id
@@ -70,15 +95,14 @@ app.get('/annonce/:id', function(req, res) {
 })
 
 app.get('/deposer', function(req, res) {
-    res.render('publishProduct.ejs')
+    res.render('publishProduct.ejs', { product: null })
 })
 
-app.post('/deposer', upload.single("photo"), function(req, res) {
+app.post('/deposer', upload.single("photos"), function(req, res) {
     var product = new Product({
         title: req.body.title,
         city: req.body.city,
         price: req.body.price,
-        pseudo: req.body.pseudo,
         description: req.body.description,
         show: true
     })
