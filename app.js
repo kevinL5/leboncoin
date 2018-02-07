@@ -14,6 +14,8 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 var productSchema = new mongoose.Schema({
     user: String,
+    who: String,
+    type: String,
     title: String,
     city: String,
     price: Number,
@@ -32,12 +34,28 @@ var userSchema = new mongoose.Schema({
 var Product = mongoose.model("Product", productSchema)
 var User = mongoose.model("User", userSchema)
 
-app.post('/annonce/:id/edit', upload.single("photos"), function(req, res) {
+app.get('/demandes', (req, res) => {
+    var type = 'demandes'
+
+    if (req.query.f) {
+        var query = { who: req.query.f, type: 'request', show: true }
+    }  else { 
+        var query = { type: 'request', show: true }
+    }
+
+    Product.find(query, (err, products) => {
+        if(!err) {
+            res.render('home.ejs', { products, type })
+        }
+    })
+})
+
+app.post('/annonce/:id/edit', upload.single("photos"), (req, res) => {
     var id = req.params.id
 
     console.log(req.body)
 
-    Product.findById(id, function(err, product) {
+    Product.findById(id, (err, product) => {
         if (!err) {
             product.title = req.body.title
             product.title = req.body.title
@@ -55,10 +73,10 @@ app.post('/annonce/:id/edit', upload.single("photos"), function(req, res) {
     })
 })
 
-app.get('/annonce/:id/edit', function(req, res) {
+app.get('/annonce/:id/edit', (req, res) => {
     var id = req.params.id
 
-    Product.findById(id, function(err, product) {
+    Product.findById(id, (err, product) => {
         if (!err) {
             console.log('coucou')
             console.log(product)
@@ -67,25 +85,25 @@ app.get('/annonce/:id/edit', function(req, res) {
     })
 })
 
-app.post('/annonce/:id/delete', function(req, res) {
+app.post('/annonce/:id/delete', (req, res) => {
     var id = req.params.id
 
-    Product.findById(id, function(err, product) {
+    Product.findById(id, (err, product) => {
         if (!err) { 
             product.show = false
-            product.save(function(err, obj) {
+            product.save((err, obj) => {
                 res.redirect('/')
             })   
         }
     })
 })
 
-app.get('/annonce/:id', function(req, res) {
+app.get('/annonce/:id', (req, res) => {
     var id = req.params.id
 
-    Product.findById(id, function(err, product) {
+    Product.findById(id, (err, product) => {
         if (!err) { 
-            User.findById(product.user, function(err, user) {
+            User.findById(product.user, (err, user) => {
                 if (!err) {
                     res.render('detailsProduct.ejs', { product, user })
                 }
@@ -94,12 +112,17 @@ app.get('/annonce/:id', function(req, res) {
     })
 })
 
-app.get('/deposer', function(req, res) {
+app.get('/deposer', (req, res) => {
     res.render('publishProduct.ejs', { product: null })
 })
 
-app.post('/deposer', upload.single("photos"), function(req, res) {
+app.post('/deposer', upload.single("photos"), (req, res) => {
+    console.log('coucou')
+    console.log(req.body)
+
     var product = new Product({
+        who: req.body.who,
+        type: req.body.type,
         title: req.body.title,
         city: req.body.city,
         price: req.body.price,
@@ -119,7 +142,7 @@ app.post('/deposer', upload.single("photos"), function(req, res) {
 
     user.save(function(err, obj) {
         if(!err) {
-            product.save(function(err, obj) {
+            product.save((err, obj) => {
                 if(!err) {
                     res.redirect('/annonce/' + product._id)
                 }
@@ -130,14 +153,44 @@ app.post('/deposer', upload.single("photos"), function(req, res) {
     
 })
 
-app.get('/', function(req,res) {
-    Product.find({ show: true }, function(err, products) {
-        if(!err) {
-            res.render('home.ejs', { products })
-        }
-    }) 
+app.get('/', (req, res) => {
+    var currentPage = (req.query.page) ? req.query.page : 1
+    var type = null
+
+    if (req.query.f) {
+        var query = { who: req.query.f, type: 'offer', show: true }
+    }  else { 
+        var query = { type: 'offer', show: true }
+    }
+
+    Product.count(query, function (err, count) {
+        var numberPages = Math.round(count/2)
+        console.log("skip")
+        console.log(currentPage * 2 - 2)
+
+        console.log("count")
+        console.log(count)
+
+        Product.find(query)
+        .limit(2)
+        .skip(currentPage * 2 - 2)
+        .exec(function(err, products) {
+            if(!err) {
+                res.render('home.ejs', { products, type, currentPage, numberPages})
+            }
+        })
+
+    })
+
+
+    // Product.find(query, function(err, products) {
+    //     if(!err) {
+    //         res.render('home.ejs', { products, type })
+    //     }
+    // })
+
 })
 
-app.listen(3000, function() {
+app.listen(3000, () => {
     console.log("Listenning on port 3000")
 })

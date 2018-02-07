@@ -45,6 +45,16 @@ body {
 }
 
 /* PRODUCTS */
+a.menuSwitch {
+    color: var(--color-dark);
+    text-decoration: none;
+    height: 50px;
+    padding: 0 30px;
+    background-color: white;
+    border: 1px solid #ccc;
+    margin-bottom: -1px;
+}
+
 .product {
     display: flex;
     background-color: white;
@@ -90,6 +100,10 @@ body {
     line-height: 30px;
     font-weight: 700;
     color: var(--color-orange)
+}
+
+.nav-pagination {
+    margin: 30px 0 30px 0;
 }
 
 /* PUBLISH PRODUCT */

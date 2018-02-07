@@ -1,21 +1,59 @@
 <% include partials/header.ejs %>
 
+<% var url = (type) ? "demandes" : "" %>
+
 <div class="container">
-        <% for(product of products) { %>
-        <a href="/annonce/<%= product._id %>" class="product">
-
-            <div class="productImg">
-                <img src="/uploads/<%= product.photos[0] %>" alt="">
-            </div>
-
-            <div class="productText">
-                <div class="title"><%= product.title %></div>
-                <div class="city"><%= product.city %></div>
-                <div class="price"><%= product.price %> €</div>
-            </div>
-
+    <div class="d-flex">
+        <a href="/<%= url %>" class="d-flex align-items-center menuSwitch">
+            <div>Tous</div>
         </a>
-        <% } %>
+        <a href="/<%= url %>?f=individual" class="d-flex align-items-center menuSwitch">
+            <div>Particulier</div>
+        </a>
+        <a href="/<%= url %>?f=corporate" class="d-flex align-items-center menuSwitch">
+            <div>Professionnel</div>
+        </a>
+    </div>
+
+    <% for(product of products) { %>
+    <a href="/annonce/<%= product._id %>" class="product">
+
+        <div class="productImg">
+            <img src="/uploads/<%= product.photos[0] %>" alt="">
+        </div>
+
+        <div class="productText">
+            <div class="title"><%= product.title %></div>
+            <div class="city"><%= product.city %></div>
+            <div class="price"><%= product.price %> €</div>
+        </div>
+
+    </a>
+    <% } %>
+
+    <nav class="d-flex justify-content-center nav-pagination">
+        <ul class="pagination">
+            <% var disabledPrev = (currentPage == 1) ? "disabled" : "" %>
+            <li class="page-item <%= disabledPrev %>">
+                <a class="page-link " href="/?page=<%= parseInt(currentPage) - 1 %>">Previous</a>
+            </li>
+
+            <% for (var i = 1; i < numberPages + 1; i++) { %>
+                <% if (i == currentPage) { %>
+                <li class="page-item active">
+                    <a class="page-link" href="/?pages=<%= i %>"><%= i %><span class="sr-only">(current)</span></a>
+                </li>
+                <% } else { %>
+                <li class="page-item"><a class="page-link" href="/?page=<%= i %>"><%= i %></a></li>
+                <% } %>
+            <% } %>
+
+            <% var disabledNext = (currentPage == numberPages) ? "disabled" : "" %>
+            <li class="page-item <%= disabledNext %>">
+                <a class="page-link " href="/?page=<%= parseInt(currentPage) + 1 %>">Next</a>
+            </li>
+        </ul>
+    </nav>
     
 </div>
 
