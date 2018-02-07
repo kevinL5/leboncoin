@@ -12,6 +12,8 @@ mongoose.connect("mongodb://localhost:27017/leboncoin")
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false }))
 
+var resultsPerPage = 3
+
 var productSchema = new mongoose.Schema({
     user: String,
     who: String,
@@ -35,18 +37,35 @@ var Product = mongoose.model("Product", productSchema)
 var User = mongoose.model("User", userSchema)
 
 app.get('/demandes', (req, res) => {
+    var currentPage = (req.query.page) ? req.query.page : 1
     var type = 'demandes'
 
     if (req.query.f) {
         var query = { who: req.query.f, type: 'request', show: true }
+        var f = req.query.f
     }  else { 
         var query = { type: 'request', show: true }
+        var f = null
     }
 
-    Product.find(query, (err, products) => {
-        if(!err) {
-            res.render('home.ejs', { products, type })
-        }
+    Product.count(query, (err, count) => {
+        var numberPages = Math.ceil(count/resultsPerPage)
+
+        Product.find(query)
+        .limit(resultsPerPage)
+        .skip(currentPage * resultsPerPage - resultsPerPage)
+        .exec(function(err, products) {
+            if(!err) {
+                res.render('home.ejs', { 
+                    products, 
+                    type, 
+                    currentPage, 
+                    numberPages,
+                    f
+                })
+            }
+        })
+
     })
 })
 
@@ -116,10 +135,7 @@ app.get('/deposer', (req, res) => {
     res.render('publishProduct.ejs', { product: null })
 })
 
-app.post('/deposer', upload.single("photos"), (req, res) => {
-    console.log('coucou')
-    console.log(req.body)
-
+app.post('/deposer', upload.array("photos", 3), (req, res) => {
     var product = new Product({
         who: req.body.who,
         type: req.body.type,
@@ -129,7 +145,12 @@ app.post('/deposer', upload.single("photos"), (req, res) => {
         description: req.body.description,
         show: true
     })
-    if (req.file) product.photos = [req.file.filename]
+
+    if (req.files) {
+        var filenamePhotos = []
+        for (photo of req.files) filenamePhotos.push(photo.filename)
+        product.photos = filenamePhotos
+    }
 
     var user = new User({
         pseudo: req.body.pseudo,
@@ -159,35 +180,31 @@ app.get('/', (req, res) => {
 
     if (req.query.f) {
         var query = { who: req.query.f, type: 'offer', show: true }
+        var f = req.query.f
     }  else { 
         var query = { type: 'offer', show: true }
+        var f = null
     }
 
-    Product.count(query, function (err, count) {
-        var numberPages = Math.round(count/2)
-        console.log("skip")
-        console.log(currentPage * 2 - 2)
-
-        console.log("count")
-        console.log(count)
+    Product.count(query, (err, count) => {
+        var numberPages = Math.ceil(count/resultsPerPage)
 
         Product.find(query)
-        .limit(2)
-        .skip(currentPage * 2 - 2)
+        .limit(resultsPerPage)
+        .skip(currentPage * resultsPerPage - resultsPerPage)
         .exec(function(err, products) {
             if(!err) {
-                res.render('home.ejs', { products, type, currentPage, numberPages})
+                res.render('home.ejs', { 
+                    products, 
+                    type, 
+                    currentPage, 
+                    numberPages,
+                    f
+                })
             }
         })
 
     })
-
-
-    // Product.find(query, function(err, products) {
-    //     if(!err) {
-    //         res.render('home.ejs', { products, type })
-    //     }
-    // })
 
 })
 

@@ -35,22 +35,22 @@
         <ul class="pagination">
             <% var disabledPrev = (currentPage == 1) ? "disabled" : "" %>
             <li class="page-item <%= disabledPrev %>">
-                <a class="page-link " href="/?page=<%= parseInt(currentPage) - 1 %>">Previous</a>
+                <a class="page-link " href="/<%= url %>?page=<%= parseInt(currentPage) - 1 %>&f=<%= f %>">Previous</a>
             </li>
 
             <% for (var i = 1; i < numberPages + 1; i++) { %>
                 <% if (i == currentPage) { %>
                 <li class="page-item active">
-                    <a class="page-link" href="/?pages=<%= i %>"><%= i %><span class="sr-only">(current)</span></a>
+                    <a class="page-link" href="/<%= url %>?pages=<%= i %>&f=<%= f %>"><%= i %><span class="sr-only">(current)</span></a>
                 </li>
                 <% } else { %>
-                <li class="page-item"><a class="page-link" href="/?page=<%= i %>"><%= i %></a></li>
+                <li class="page-item"><a class="page-link" href="/<%= url %>?page=<%= i %>&f=<%= f %>"><%= i %></a></li>
                 <% } %>
             <% } %>
 
             <% var disabledNext = (currentPage == numberPages) ? "disabled" : "" %>
             <li class="page-item <%= disabledNext %>">
-                <a class="page-link " href="/?page=<%= parseInt(currentPage) + 1 %>">Next</a>
+                <a class="page-link " href="/<%= url %>?page=<%= parseInt(currentPage) + 1 %>&f=<%= f %>">Next</a>
             </li>
         </ul>
     </nav>
