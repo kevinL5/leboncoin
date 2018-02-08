@@ -48,7 +48,7 @@
                 <% } %>
             <% } %>
 
-            <% var disabledNext = (currentPage == numberPages) ? "disabled" : "" %>
+            <% var disabledNext = (currentPage == numberPages || numberPages === 0) ? "disabled" : "" %>
             <li class="page-item <%= disabledNext %>">
                 <a class="page-link " href="/<%= url %>?page=<%= parseInt(currentPage) + 1 %>&f=<%= f %>">Next</a>
             </li>

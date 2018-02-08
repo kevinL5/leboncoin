@@ -3,8 +3,15 @@ var bodyParser = require('body-parser')
 var multer  = require('multer')
 var upload = multer({ dest: 'public/uploads/' })
 var mongoose = require('mongoose')
+var session = require('express-session')
+var MongoStore = require('connect-mongo')(session)
+var passport = require('passport');
+var LocalStrategy = require('passport-local')
+var passportLocalMongoose = require('passport-local-mongoose')
 
-var find = require('lodash.find');
+/* Models */
+var User = require('./models/user')
+var Product = require('./models/product')
 
 var app = express()
 mongoose.connect("mongodb://localhost:27017/leboncoin")
@@ -12,31 +19,28 @@ mongoose.connect("mongodb://localhost:27017/leboncoin")
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false }))
 
+// Activer la gestion de la session
+app.use(session({
+    secret: 'leboncoin-app',
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({mongooseConnection: mongoose.connection})
+}))
+
+// Activer `passport`
+app.use(passport.initialize())
+app.use(passport.session())
+
+passport.use(User.createStrategy())
+passport.serializeUser(User.serializeUser()) // JSON.stringify
+passport.deserializeUser(User.deserializeUser()) // JSON.parse
+
+
 var resultsPerPage = 3
 
-var productSchema = new mongoose.Schema({
-    user: String,
-    who: String,
-    type: String,
-    title: String,
-    city: String,
-    price: Number,
-    description: String,
-    photos: [String],
-    show: Boolean
-})
-
-var userSchema = new mongoose.Schema({
-    pseudo: String,
-    email: String,
-    phone: String,
-    products: [String]
-})
-
-var Product = mongoose.model("Product", productSchema)
-var User = mongoose.model("User", userSchema)
 
 app.get('/demandes', (req, res) => {
+    var user = req.user
     var currentPage = (req.query.page) ? req.query.page : 1
     var type = 'demandes'
 
@@ -61,7 +65,8 @@ app.get('/demandes', (req, res) => {
                     type, 
                     currentPage, 
                     numberPages,
-                    f
+                    f,
+                    user
                 })
             }
         })
@@ -69,7 +74,7 @@ app.get('/demandes', (req, res) => {
     })
 })
 
-app.post('/annonce/:id/edit', upload.single("photos"), (req, res) => {
+app.post('/annonce/:id/edit', checkUser, upload.single("photos"), (req, res) => {
     var id = req.params.id
 
     console.log(req.body)
@@ -92,7 +97,7 @@ app.post('/annonce/:id/edit', upload.single("photos"), (req, res) => {
     })
 })
 
-app.get('/annonce/:id/edit', (req, res) => {
+app.get('/annonce/:id/edit', checkUser, (req, res) => {
     var id = req.params.id
 
     Product.findById(id, (err, product) => {
@@ -104,7 +109,7 @@ app.get('/annonce/:id/edit', (req, res) => {
     })
 })
 
-app.post('/annonce/:id/delete', (req, res) => {
+app.post('/annonce/:id/delete', checkUser, (req, res) => {
     var id = req.params.id
 
     Product.findById(id, (err, product) => {
@@ -118,13 +123,15 @@ app.post('/annonce/:id/delete', (req, res) => {
 })
 
 app.get('/annonce/:id', (req, res) => {
+    var user = req.user
     var id = req.params.id
 
     Product.findById(id, (err, product) => {
         if (!err) { 
-            User.findById(product.user, (err, user) => {
+            User.findById(product.user, (err, depositor) => {
                 if (!err) {
-                    res.render('detailsProduct.ejs', { product, user })
+                    res.render('detailsProduct.ejs', 
+                    { product, depositor, user })
                 }
             })
         }
@@ -132,7 +139,8 @@ app.get('/annonce/:id', (req, res) => {
 })
 
 app.get('/deposer', (req, res) => {
-    res.render('publishProduct.ejs', { product: null })
+    var user = req.user
+    res.render('publishProduct.ejs', { product: null, user })
 })
 
 app.post('/deposer', upload.array("photos", 3), (req, res) => {
@@ -145,36 +153,46 @@ app.post('/deposer', upload.array("photos", 3), (req, res) => {
         description: req.body.description,
         show: true
     })
-
     if (req.files) {
         var filenamePhotos = []
         for (photo of req.files) filenamePhotos.push(photo.filename)
         product.photos = filenamePhotos
     }
 
-    var user = new User({
-        pseudo: req.body.pseudo,
-        email: req.body.email,
-        phone: req.body.phone,
-        products: [product._id]
-    })
-
-    product.user = user._id
-
-    user.save(function(err, obj) {
-        if(!err) {
-            product.save((err, obj) => {
-                if(!err) {
-                    res.redirect('/annonce/' + product._id)
-                }
-            })
+    User.register(
+        new User({
+            pseudo: req.body.pseudo,
+            email: req.body.email,
+            password: req.body.password,
+            phone: req.body.phone,
+            products: [product._id]
+        }),
+        req.body.password, // password will be hashed
+        function(err, user) {
+            if (err) {
+                console.log(err)
+                return res.redirect('/deposer')
+            } else {
+                passport.authenticate('local')(req, res, function() {
+                    saveAndRedirect(req.user._id)
+                })
+            }
         }
-    })
+    )
 
+    function saveAndRedirect(userid) {
+        product.user = userid
+        product.save( (err, product) => {
+            if(!err) {
+                res.redirect('/annonce/' + product._id)
+            }
+        })
+    }
     
 })
 
 app.get('/', (req, res) => {
+    var user = req.user
     var currentPage = (req.query.page) ? req.query.page : 1
     var type = null
 
@@ -199,7 +217,8 @@ app.get('/', (req, res) => {
                     type, 
                     currentPage, 
                     numberPages,
-                    f
+                    f,
+                    user
                 })
             }
         })
@@ -211,3 +230,11 @@ app.get('/', (req, res) => {
 app.listen(3000, () => {
     console.log("Listenning on port 3000")
 })
+
+function checkUser(req, res, next) {
+    if (!req.user) {
+      res.send('Vous devez être connecté pour accéder à cette page');
+    } else {
+      next();    
+    }
+}

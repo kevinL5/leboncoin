@@ -32,7 +32,7 @@
         </section>
 
         <section class="padding">
-            <div class="pseudo"><%= user.pseudo %></div>
+            <div class="pseudo"><%= depositor.pseudo %></div>
         </section>
 
         <section class="d-flex align-items-center">
@@ -54,11 +54,13 @@
 
     <div class="right-details">
         <section>
-            <div class="pseudo-right"><%= user.pseudo %></div>
+            <div class="pseudo-right"><%= depositor.pseudo %></div>
         </section>
         <section>
             <button class="btn btn-phone">Voir le numéro</button>
         </section>
+ 
+        <% if ( user._id.equals(depositor._id) ) { %>
         <section>
             <a href="/annonce/<%= product._id %>/edit" class="btn btn-warning">Modifier</a>
 
@@ -66,6 +68,7 @@
                 <button class="btn btn-danger">Supprimer</button>
             </form>
         </section>
+        <% } %>
     </div>
 </div>
 
