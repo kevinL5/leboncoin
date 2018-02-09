@@ -14,7 +14,7 @@ var User = require('./models/user')
 var Product = require('./models/product')
 
 var app = express()
-mongoose.connect(process.env.PROD_MONGODB || "mongodb://localhost:27017/nom-du-projet")
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/nom-du-projet")
 
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false }))
