@@ -7,6 +7,11 @@
     var description = product.description
     var price = product.price
     var city = product.city
+
+    var individual = (product.who === "individual") ? "checked" : ""
+    var corporate = (product.who === "corporate") ? "checked" : ""
+    var offer = (product.type === "offer") ? "checked" : ""
+    var request = (product.type === "request") ? "checked" : ""
 } else {
     var h1 = "Déposer votre annonce"
     var action = "/deposer"
@@ -25,11 +30,11 @@
                 <label>Vous êtes un</label>
                 <div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input who-check-input" type="checkbox" name="who" value="individual">
+                        <input class="form-check-input who-check-input" type="checkbox" name="who" value="individual" <%= individual%> >
                         <label class="form-check-label" for="inlineCheckbox1">Particulier</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input who-check-input" type="checkbox" name="who" value="corporate">
+                        <input class="form-check-input who-check-input" type="checkbox" name="who" value="corporate" <%= corporate %> >
                         <label class="form-check-label" for="inlineCheckbox2">Professionnel</label>
                     </div>
                     
@@ -39,11 +44,11 @@
                 <label>Type d'annonce</label>
                 <div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input type-check-input" type="checkbox" name="type" value="offer">
+                        <input class="form-check-input type-check-input" type="checkbox" name="type" value="offer" <%= offer %> >
                         <label class="form-check-label" for="inlineCheckbox1">Offre</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input type-check-input" type="checkbox" name="type" value="request">
+                        <input class="form-check-input type-check-input" type="checkbox" name="type" value="request" <%= request %> >
                         <label class="form-check-label" for="inlineCheckbox2">Demande</label>
                     </div>
                 </div>
@@ -65,13 +70,14 @@
             </div>
 
             <div class="form-group">
-                <label>Photo</label>
-                <% if(product != null) { %>
-                    <img src="/uploads/<%= product.photos[0] %>" alt="" width=120>
-                <% } %>
-                <input type="file" name="photos" class="form-control-file">
-                <input type="file" name="photos" class="form-control-file">
-                <input type="file" name="photos" class="form-control-file">
+                <div><label>Photo</label></div>
+                <% 
+                if (product != null) { 
+                    for (photo of product.photos) {
+                %>
+                    <img src="/uploads/<%= photo %>" alt="" width=120>
+                <% }} %>
+                <input type="file" name="photos" class="form-control-file" multiple>
             </div>
         </section>
 
@@ -84,7 +90,7 @@
             </div>
         </section>
 
-        <% if (product === null) { %>
+        <% if ( product === null && user._id === undefined  ) {  %>
         <h2>Vos informations</h2>
         <section>
             <div class="form-group">
@@ -100,6 +106,7 @@
             <div class="form-group">
                 <label>Mot de passe</label>
                 <input type="password" name="password"class="form-control">
+                <div class='invalid-feedback'>Choisir un mot de passe d'au moins 6 caractères</div>
             </div>
             <div class="form-group">
                 <label>Téléphone</label>

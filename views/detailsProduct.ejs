@@ -13,12 +13,20 @@
                     <% } %>
                 </ol>
                 <div class="carousel-inner">
-                    <% for (var i = 1; i < product.photos.length + 1; i++) { %>
-                    <% var active = (i === 1) ? "active" : "" %>
-                    <div class="carousel-item <%= active %>">
-                        <img class="d-block w-100" src="/uploads/<%= product.photos[i - 1] %>" alt="Photo produit">
-                    </div>
-                    <% } %>
+                    <% if (product.photos.length === 0) { %>
+                        <div class="carousel-item active">
+                            <img class="d-block w-100" src="/img/no-photo.png" alt="No photo">
+                        </div>
+                    <% } else {
+                        var active = "active" 
+                        for (var i = 1; i < product.photos.length + 1; i++) {
+                            console.log(product.photos[i - 1])
+                            if (product.photos[i - 1] !== null) { %>
+                            <div class="carousel-item <%= active %>">
+                                <img class="d-block w-100" src="/uploads/<%= product.photos[i - 1] %>" alt="Photo produit">
+                            </div>
+                            <% active = "" %>
+                    <% }}} %>
                 </div>
                 <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -60,7 +68,10 @@
             <button class="btn btn-phone">Voir le numéro</button>
         </section>
  
-        <% if ( user._id.equals(depositor._id) ) { %>
+        <% 
+        if (user._id) {
+            if ( user._id.equals(depositor._id) ) { 
+        %>
         <section>
             <a href="/annonce/<%= product._id %>/edit" class="btn btn-warning">Modifier</a>
 
@@ -68,7 +79,7 @@
                 <button class="btn btn-danger">Supprimer</button>
             </form>
         </section>
-        <% } %>
+        <% }} %>
     </div>
 </div>
 

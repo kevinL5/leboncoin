@@ -38,9 +38,33 @@ passport.deserializeUser(User.deserializeUser()) // JSON.parse
 
 var resultsPerPage = 3
 
+app.get("/deconnexion", function(req, res) {
+    req.logout();
+    res.redirect('/');
+});
+
+app.get('/connexion', (req,res) => {
+    var user = (req.user) ? req.user : {}
+    res.render('login.ejs', { user }) 
+})
+
+app.post('/connexion', passport.authenticate('local', {
+    successRedirect: '/moncompte',
+    failureRedirect: '/connexion'
+  }));
+
+app.get('/moncompte', (req,res) => {
+    if(req.user) {
+        var user = req.user
+
+        Product.find({user: req.user._id}, (err, products) => {
+            res.render('myAccount.ejs', { products, user })
+        })
+    }
+})
 
 app.get('/demandes', (req, res) => {
-    var user = req.user
+    var user = (req.user) ? req.user : {}
     var currentPage = (req.query.page) ? req.query.page : 1
     var type = 'demandes'
 
@@ -74,56 +98,71 @@ app.get('/demandes', (req, res) => {
     })
 })
 
-app.post('/annonce/:id/edit', checkUser, upload.single("photos"), (req, res) => {
+app.post('/annonce/:id/edit', upload.array('photos', 3), (req, res) => {
     var id = req.params.id
 
-    console.log(req.body)
+    if (req.user) {
+        Product.findById(id, (err, product) => {
+            if (!err) {
+                if ( !req.user._id == product.user ) { 
+                    return res.send('Biatch') 
+                }
+
+                product.title = req.body.title
+                product.title = req.body.title
+                product.city = req.body.city
+                product.price = req.body.price
+                product.pseudo = req.body.pseudo
+                product.description = req.body.description
+                
+                if (req.files) {
+                    var filenamePhotos = []
+                    for (photo of req.files) filenamePhotos.push(photo.filename)
+                    product.photos = filenamePhotos
+                }
+
+                product.save(function(err, obj) {
+                    res.redirect('/annonce/' + obj._id)
+                })
+            }
+        })
+    }
+
+})
+
+app.get('/annonce/:id/edit', (req, res) => {
+    var user = (req.user) ? req.user : {}
+    var id = req.params.id
 
     Product.findById(id, (err, product) => {
         if (!err) {
-            product.title = req.body.title
-            product.title = req.body.title
-            product.city = req.body.city
-            product.price = req.body.price
-            product.pseudo = req.body.pseudo
-            product.description = req.body.description
-            
-            if (req.file) product.photos = [req.file.filename]
-
-            product.save(function(err, obj) {
-                res.redirect('/annonce/' + obj._id)
-            })
+            res.render('publishProduct.ejs', { product, user })
         }
     })
 })
 
-app.get('/annonce/:id/edit', checkUser, (req, res) => {
+app.post('/annonce/:id/delete', (req, res) => {
     var id = req.params.id
 
-    Product.findById(id, (err, product) => {
-        if (!err) {
-            console.log('coucou')
-            console.log(product)
-            res.render('publishProduct.ejs', { product })
-        }
-    })
-})
-
-app.post('/annonce/:id/delete', checkUser, (req, res) => {
-    var id = req.params.id
-
-    Product.findById(id, (err, product) => {
-        if (!err) { 
-            product.show = false
-            product.save((err, obj) => {
-                res.redirect('/')
-            })   
-        }
-    })
+    if (req.user) {
+        Product.findById(id, (err, product) => {
+            if (!err) {
+                if ( !req.user._id == product.user ) { 
+                    return res.send('Biatch') 
+                }
+    
+                product.show = false
+                product.save((err, obj) => {
+                    res.redirect('/')
+                })   
+            }
+        })
+    } 
+    
 })
 
 app.get('/annonce/:id', (req, res) => {
-    var user = req.user
+    var user = (req.user) ? req.user : {}
     var id = req.params.id
 
     Product.findById(id, (err, product) => {
@@ -139,11 +178,12 @@ app.get('/annonce/:id', (req, res) => {
 })
 
 app.get('/deposer', (req, res) => {
-    var user = req.user
+    var user = (req.user) ? req.user : {}
     res.render('publishProduct.ejs', { product: null, user })
 })
 
-app.post('/deposer', upload.array("photos", 3), (req, res) => {
+app.post('/deposer', upload.array('photos', 3), (req, res) => {
+
     var product = new Product({
         who: req.body.who,
         type: req.body.type,
@@ -159,32 +199,36 @@ app.post('/deposer', upload.array("photos", 3), (req, res) => {
         product.photos = filenamePhotos
     }
 
-    User.register(
-        new User({
-            pseudo: req.body.pseudo,
-            email: req.body.email,
-            password: req.body.password,
-            phone: req.body.phone,
-            products: [product._id]
-        }),
-        req.body.password, // password will be hashed
-        function(err, user) {
-            if (err) {
-                console.log(err)
-                return res.redirect('/deposer')
-            } else {
-                passport.authenticate('local')(req, res, function() {
-                    saveAndRedirect(req.user._id)
-                })
+    if (req.user) {
+        saveAndRedirect(req.user._id)
+    } else {
+        User.register(
+            new User({
+                pseudo: req.body.pseudo,
+                email: req.body.email,
+                password: req.body.password,
+                phone: req.body.phone,
+                products: [product._id]
+            }),
+            req.body.password, // password will be hashed
+            function(err, user) {
+                if (err) {
+                    console.log(err)
+                    return res.redirect('/deposer')
+                } else {
+                    passport.authenticate('local')(req, res, function() {
+                        saveAndRedirect(req.user._id)
+                    })
+                }
             }
-        }
-    )
-
+        )
+    }
+   
     function saveAndRedirect(userid) {
         product.user = userid
         product.save( (err, product) => {
             if(!err) {
-                res.redirect('/annonce/' + product._id)
+                return res.redirect('/annonce/' + product._id)
             }
         })
     }
@@ -192,7 +236,7 @@ app.post('/deposer', upload.array("photos", 3), (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    var user = req.user
+    var user = (req.user) ? req.user : {}
     var currentPage = (req.query.page) ? req.query.page : 1
     var type = null
 
@@ -227,14 +271,6 @@ app.get('/', (req, res) => {
 
 })
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
     console.log("Listenning on port 3000")
 })
-
-function checkUser(req, res, next) {
-    if (!req.user) {
-      res.send('Vous devez être connecté pour accéder à cette page');
-    } else {
-      next();    
-    }
-}

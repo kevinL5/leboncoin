@@ -1,0 +1,30 @@
+<% include partials/header.ejs %>
+
+<div class="container publish-product">
+
+    <h1>Se connecter</h1>
+
+    <hr>
+
+    <form action="/connexion" method="post">
+        <h2>Vos informations</h2>
+        <section>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email"class="form-control" aria-describedby="emailHelp">
+                <div class='invalid-feedback'>Mettre une addresse email valide</div>
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" name="password"class="form-control">
+            </div>
+        </section>
+        
+        <button type="submit" class="btn btn-publish">Se connecter</button>
+    </form>
+
+</div>
+
+<% include partials/footer.ejs %>  
+
+
