@@ -14,7 +14,7 @@ var User = require('./models/user')
 var Product = require('./models/product')
 
 var app = express()
-mongoose.connect("mongodb://localhost:27017/leboncoin")
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/nom-du-projet")
 
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -272,5 +272,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(process.env.PORT || 3000, () => {
-    console.log("Listenning on port 3000")
+    console.log("Server started")
 })
