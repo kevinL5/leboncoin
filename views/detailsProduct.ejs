@@ -23,7 +23,7 @@
                             console.log(product.photos[i - 1])
                             if (product.photos[i - 1] !== null) { %>
                             <div class="carousel-item <%= active %>">
-                                <img class="d-block w-100" src="/uploads/<%= product.photos[i - 1] %>" alt="Photo produit">
+                                <img class="d-block w-100" src="<%= product.photos[i - 1] %>" alt="Photo produit">
                             </div>
                             <% active = "" %>
                     <% }}} %>
@@ -62,16 +62,19 @@
 
     <div class="right-details">
         <section>
-            <div class="pseudo-right"><%= depositor.pseudo %></div>
+            <div class="pseudo-right">
+                <div><%= depositor.pseudo %></div>   
+            </div>
         </section>
         <section>
-            <button class="btn btn-phone">Voir le numéro</button>
+            <div class="phone-toggle">
+                <button class="btn btn-phone">Voir le numéro</button>
+                <div class="phone-area">06.08.09.98.67</div>
+            </div>
         </section>
  
-        <% 
-        if (user._id) {
-            if ( user._id.equals(depositor._id) ) { 
-        %>
+        <% if (user._id) {
+            if ( user._id.equals(depositor._id) ) { %>
         <section>
             <a href="/annonce/<%= product._id %>/edit" class="btn btn-warning">Modifier</a>
 
