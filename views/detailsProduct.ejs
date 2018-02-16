@@ -75,7 +75,7 @@
  
         <% if (user._id) {
             if ( user._id.equals(depositor._id) ) { %>
-        <section>
+        <section class="owner-actions">
             <a href="/annonce/<%= product._id %>/edit" class="btn btn-warning">Modifier</a>
 
             <form action="/annonce/<%= product._id %>/delete" method="post">

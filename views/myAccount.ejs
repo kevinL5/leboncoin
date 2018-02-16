@@ -7,7 +7,7 @@
 
         <div class="productImg">
             <% if (product.photos[0]) { %>
-            <img src="/uploads/<%= product.photos[0] %>" alt="Photo produit">
+            <img src="<%= product.photos[0] %>" alt="Photo produit">
             <% } else { %>
             <img src="/img/no-photo.png %>" alt="No Photo">
             <% } %>

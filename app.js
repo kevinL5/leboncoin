@@ -141,7 +141,7 @@ app.post('/annonce/:id/edit', parser.array('photos', 3), (req, res) => {
 				product.pseudo = req.body.pseudo
 				product.description = req.body.description
 
-				if (req.files) {
+				if (req.files.length !== 0) {
 					var images = []
 					for (var i = 0; i < req.files.length; i++) {
 						images.push(req.files[i].secure_url)

@@ -265,8 +265,8 @@ section.padding {
 	font-weight: 600;
 	color: var(--color-dark);
 	background-color: #e6e6e6;
-	margin-bottom: 5px;
 	border: 1px solid #ccc;
+	margin-bottom: 5px;
 }
 
 .right-details .phone-toggle {
@@ -275,13 +275,11 @@ section.padding {
 
 .right-details .btn {
 	width: 100%;
-	margin-bottom: 5px;
 }
 
 .right-details .btn-phone {
 	background-color: var(--color-orange);
 	color: white;
-	margin-bottom: 0;
 }
 
 .right-details .btn-phone:focus {
@@ -299,4 +297,8 @@ section.padding {
 	display: none;
 	justify-content: center;
 	align-items: center;
+}
+
+.right-details .owner-actions .btn {
+	margin-top: 5px;
 }
